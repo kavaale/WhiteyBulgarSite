@@ -8,7 +8,7 @@ $(function () {
     var gameOn = 1;
     var clearMines = 0;
     var set = []
-
+    //generates grid
     while(y < 10){
         y++;
         while(x<10){
@@ -20,6 +20,7 @@ $(function () {
         $("#grid").append("<br class='gridPiece'>");
         x = 0;
     }
+    //loop for populating mines
     while(i<20){
         x=0;
         while(i<20&&x<100) {
@@ -31,25 +32,33 @@ $(function () {
             x++;
         }
     }
+    //sets starting mine counter
     n=20;
     $("#houses").text(n);
 
+    //puts clicked box into variable location for use by main function
     function clickChoice() {
         location = parseInt($(this).attr("id"));
         evalChoice(location);
     }
 
+    //main function
     function evalChoice(location) {
+        //checks if clicked location has a flag to prevent from being clicked
         if ($("#" + location).hasClass("Flag") == false) {
             hint = 0;
+            //if clicked on mine player loses and all mines revealed
             if ($("#" + location).hasClass("gridMine") && gameOn == 1) {
                 $("*.gridMine").addClass("Mine").removeClass("gridMine");
                 gameOn = 0;
                 $("#houses").remove();
                 $("h2").text("You Lose!");
             }
+            //if clicked on non mine reveals space and counts spaces in surrounding 8 squares to let player
+            //know how many mines are around
             if ($("#" + location).hasClass("gridClear") && gameOn == 1) {
                 $("#" + location).removeClass("Tile").addClass("Empty").removeClass("gridClear");
+                //set= if is to make sure the function only runs certain parts depending on which box was clicked
                 set = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 31, 41, 51, 61, 71, 81, 91];
                 if (set.includes(location) == false) {
                     x = location - 11;
@@ -106,7 +115,7 @@ $(function () {
                         hint++;
                     }
                 }
-
+                //counts empty spaces everytime to see if player completed the game
                 y = 0
                 clearMines = 0;
                 while (y < 100) {
@@ -120,7 +129,8 @@ $(function () {
                     $("#houses").remove();
                     $("h2").text("You Win!");
                 }
-
+                //repeats the main function if there are no mines in the surrounding area to save player time clicking
+                //revealing board in a chain of functions
                 $("#" + location).text(hint);
                 if (hint == 0) {
                     set = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 21, 31, 41, 51, 61, 71, 81, 91];
@@ -151,6 +161,7 @@ $(function () {
             }
         }
     }
+    //allows right click input to create "flags" where the player thinks mines are
     $('*').bind('contextmenu', function(e) {
         e.preventDefault();
         if($(this).hasClass("Tile")&&gameOn==1){
